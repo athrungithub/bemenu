@@ -63,12 +63,15 @@ usage(FILE *out, const char *name)
           " -h, --help            display this help and exit.\n"
           " -v, --version         display version.\n"
           " -i, --ignorecase      match items case insensitively.\n"
-          " -w, --wrap            wraps cursor selection.\n"
           " -l, --list            list items vertically with the given number of lines.\n"
           " -p, --prompt          defines the prompt text to be displayed.\n"
           " -P, --prefix          text to shown before highlighted item.\n"
           " -I, --index           select item at index automatically.\n"
-          " --scrollbar           display scrollbar. (always, autohide)\n\n"
+          " -x, --xpos            x position.\n"
+          " -y, --ypos            y position.\n"
+          " -w, --width           width.\n"
+          " --scrollbar           display scrollbar. (always, autohide)\n"
+          " --wrap                wraps cursor selection.\n\n"
 
           "Use BEMENU_BACKEND env variable to force backend:\n"
           " curses               ncurses based terminal backend\n"
@@ -109,13 +112,16 @@ parse_args(struct client *client, int *argc, char **argv[])
     static const struct option opts[] = {
         { "help",        no_argument,       0, 'h' },
         { "version",     no_argument,       0, 'v' },
-
         { "ignorecase",  no_argument,       0, 'i' },
-        { "wrap",        no_argument,       0, 'w' },
         { "list",        required_argument, 0, 'l' },
         { "prompt",      required_argument, 0, 'p' },
         { "index",       required_argument, 0, 'I' },
         { "prefix",      required_argument, 0, 'P' },
+        { "xpos",        required_argument, 0, 'x' },
+        { "ypos",        required_argument, 0, 'y' },
+        { "width",       required_argument, 0, 'w' },
+
+        { "wrap",        no_argument,       0, 0x090 },
         { "scrollbar",   required_argument, 0, 0x100 },
 
         { "bottom",      no_argument,       0, 'b' },
@@ -144,7 +150,7 @@ parse_args(struct client *client, int *argc, char **argv[])
      * or parse them before running getopt.. */
 
     for (;;) {
-        int32_t opt = getopt_long(*argc, *argv, "hviwl:I:p:P:I:bfm:", opts, NULL);
+        int32_t opt = getopt_long(*argc, *argv, "hvil:p:P:I:x:y:w:bfm:", opts, NULL);
         if (opt < 0)
             break;
 
@@ -155,12 +161,8 @@ parse_args(struct client *client, int *argc, char **argv[])
             case 'v':
                 version(*argv[0]);
                 break;
-
             case 'i':
                 client->filter_mode = BM_FILTER_MODE_DMENU_CASE_INSENSITIVE;
-                break;
-            case 'w':
-                client->wrap = true;
                 break;
             case 'l':
                 client->lines = strtol(optarg, NULL, 10);
@@ -174,10 +176,18 @@ parse_args(struct client *client, int *argc, char **argv[])
             case 'I':
                 client->selected = strtol(optarg, NULL, 10);
                 break;
+            case 'x':
+                client->x = strtol(optarg, NULL, 0);
+                break;
+            case 'y':
+                client->y = strtol(optarg, NULL, 0);
+                break;
+            case 'w':
+                client->w = strtol(optarg, NULL, 0);
+                break;
             case 0x100:
                 client->scrollbar = (!strcmp(optarg, "always") ? BM_SCROLLBAR_ALWAYS : (!strcmp(optarg, "autohide") ? BM_SCROLLBAR_AUTOHIDE : BM_SCROLLBAR_NONE));
                 break;
-
             case 'b':
                 client->bottom = true;
                 break;
@@ -187,7 +197,9 @@ parse_args(struct client *client, int *argc, char **argv[])
             case 'm':
                 client->monitor = strtol(optarg, NULL, 10);
                 break;
-
+            case 0x090:
+                client->wrap = true;
+                break;
             case 0x101:
                 client->font = optarg;
                 break;
@@ -260,6 +272,9 @@ menu_with_options(struct client *client)
     bm_menu_set_bottom(menu, client->bottom);
     bm_menu_set_monitor(menu, client->monitor);
     bm_menu_set_scrollbar(menu, client->scrollbar);
+    bm_menu_set_width(menu, client->w);
+    bm_menu_set_ypos(menu, client->y);
+    bm_menu_set_xpos(menu, client->x);
 
     for (uint32_t i = 0; i < BM_COLOR_LAST; ++i)
         bm_menu_set_color(menu, i, client->colors[i]);

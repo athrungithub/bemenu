@@ -7,7 +7,7 @@
 #include <stdlib.h>
 #include <sys/mman.h>
 
-#define USE_XDG_SHELL false
+#define USE_XDG_SHELL true
 
 static int
 set_cloexec_or_close(int fd)
@@ -220,8 +220,10 @@ static const struct wl_shell_surface_listener shell_surface_listener = {
 static void
 xdg_surface_configure(void *data, struct xdg_surface *surface, int32_t width, int32_t height, struct wl_array *states, uint32_t serial)
 {
-    (void)data, (void)states, (void)width, (void)height, (void)states, (void)serial;
-    xdg_surface_ack_configure(surface, serial);
+    (void)states, (void)width, (void)height, (void)states, (void)surface, (void)serial;
+    struct window *d = data;
+    xdg_surface_set_window_geometry(d->xdg_surface, d->xpos , d->ypos, width, height);
+    xdg_surface_ack_configure(d->xdg_surface, serial);
 }
 
 static void
@@ -255,8 +257,13 @@ bm_wl_window_render(struct window *window, const struct bm_menu *menu)
 
     if (window->frame_cb)
         return;
-
     struct buffer *buffer;
+
+    if (menu->width)
+        window->width = menu->width;
+    window->xpos = menu->xpos;
+    window->ypos = menu->ypos;
+
     for (int tries = 0; tries < 2; ++tries) {
         if (!(buffer = next_buffer(window))) {
             fprintf(stderr, "could not get next buffer");
@@ -268,12 +275,19 @@ bm_wl_window_render(struct window *window, const struct bm_menu *menu)
 
         struct cairo_paint_result result;
         window->notify.render(&buffer->cairo, buffer->width, fmin(buffer->height, window->max_height), window->max_height, menu, &result);
-        window->displayed = result.displayed;
 
-        if (window->height == result.height)
-            break;
+       if (!menu->lines) {
+            if (window->height == result.height)
+                 break;
+       } else { /*TODO set bottom*/
+           if (window->displayed != result.displayed) {
+           } else {
+               break;
 
+           }
+       }
         window->height = result.height;
+        window->displayed = result.displayed;
         destroy_buffer(buffer);
     }
 
@@ -312,6 +326,7 @@ bm_wl_window_create(struct window *window, struct wl_shm *shm, struct wl_shell *
     if (USE_XDG_SHELL && xdg_shell && (window->xdg_surface = xdg_shell_get_xdg_surface(xdg_shell, surface))) {
         xdg_surface_add_listener(window->xdg_surface, &xdg_surface_listener, window);
         xdg_surface_set_title(window->xdg_surface, "bemenu");
+        xdg_surface_set_app_id(window->xdg_surface, "bemenu");
     } else if (shell && (window->shell_surface = wl_shell_get_shell_surface(shell, surface))) {
         wl_shell_surface_add_listener(window->shell_surface, &shell_surface_listener, window);
         wl_shell_surface_set_title(window->shell_surface, "bemenu");

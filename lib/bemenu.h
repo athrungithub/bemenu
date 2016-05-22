@@ -718,6 +718,36 @@ bool bm_item_set_text(struct bm_item *item, const char *text);
  */
 const char* bm_item_get_text(const struct bm_item *item);
 
+/**
+ * Set x position on screen.
+ */
+void bm_menu_set_xpos(struct bm_menu *menu, uint32_t x);
+
+/**
+ * Get x position on scren.
+ */
+uint32_t bm_menu_get_xpos(struct bm_menu *menu);
+
+/**
+ * Set y position on screen.
+ */
+void bm_menu_set_ypos(struct bm_menu *menu, uint32_t);
+
+/**
+ * Get y positon on screen.
+ */
+uint32_t bm_menu_get_ypos(struct bm_menu *menu);
+
+/**
+ * Set width menu.
+ */
+void bm_menu_set_width(struct bm_menu *menu, uint32_t w);
+
+/**
+ * Get width menu.
+ */
+uint32_t bm_menu_get_width(struct bm_menu *menu);
+
 /**  @} Item Properties */
 
 /**  @} Item */
