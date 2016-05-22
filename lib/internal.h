@@ -268,6 +268,21 @@ struct bm_menu {
     uint32_t lines;
 
     /**
+     * x position on screen.
+     */
+    uint32_t xpos;
+
+    /**
+     * y position on screen.
+     */
+    uint32_t ypos;
+
+    /**
+     * width menu.
+     */
+    uint32_t width;
+
+    /**
      * Current monitor.
      */
     uint32_t monitor;

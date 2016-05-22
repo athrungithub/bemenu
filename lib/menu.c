@@ -764,4 +764,54 @@ bm_menu_run_with_key(struct bm_menu *menu, enum bm_key key, uint32_t unicode)
     return BM_RUN_RESULT_RUNNING;
 }
 
+void
+bm_menu_set_xpos(struct bm_menu *menu, uint32_t x)
+{
+    assert(menu);
+
+    menu->xpos = x;
+    return;
+}
+
+uint32_t
+bm_menu_get_xpos(struct bm_menu *menu)
+{
+    assert(menu);
+
+    return menu->xpos;
+}
+
+void
+bm_menu_set_ypos(struct bm_menu *menu, uint32_t y)
+{
+    assert(menu);
+
+    menu->ypos = y;
+    return;
+}
+
+uint32_t
+bm_menu_get_ypos(struct bm_menu *menu)
+{
+    assert(menu);
+
+    return menu->ypos;
+}
+
+void
+bm_menu_set_width(struct bm_menu *menu, uint32_t w)
+{
+    assert(menu);
+
+    menu->width = w;
+}
+
+uint32_t
+bm_menu_get_width(struct bm_menu *menu)
+{
+    assert(menu);
+
+    return menu->width;
+}
+
 /* vim: set ts=8 sw=4 tw=0 :*/
