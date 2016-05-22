@@ -37,11 +37,10 @@ render(const struct bm_menu *menu)
         }
     }
 
-    wayland->window.xpos = menu->xpos;
-    wayland->window.ypos = menu->ypos;
     if (wayland->input.code != wayland->input.last_code) {
         wayland->input.last_code = wayland->input.code;
     }
+    //always redraw
     bm_wl_window_render(&wayland->window, menu);
 }
 
@@ -195,8 +194,6 @@ destructor(struct bm_menu *menu)
 static bool
 constructor(struct bm_menu *menu)
 {
-    assert(menu);
-    
     if (!getenv("WAYLAND_DISPLAY") && !getenv("WAYLAND_SOCKET"))
         return false;
 
@@ -218,6 +215,12 @@ constructor(struct bm_menu *menu)
     if (!(surface = wl_compositor_create_surface(wayland->compositor)))
         goto fail;
 
+    wayland->window.height = 1;
+    wayland->window.xpos = menu->xpos;
+    wayland->window.ypos = menu->ypos;
+    if (menu->width)
+        wayland->window.width = menu->width;
+
     if (!bm_wl_window_create(&wayland->window, wayland->shm, wayland->shell, wayland->xdg_shell, surface))
         goto fail;
 
@@ -227,10 +230,6 @@ constructor(struct bm_menu *menu)
     wayland->fds.display = wl_display_get_fd(wayland->display);
     wayland->fds.repeat = timerfd_create(CLOCK_MONOTONIC, TFD_CLOEXEC | TFD_NONBLOCK);
 
-    wayland->window.height = 1;
-    /*fprintf(stderr, "menu->xpos=%d\tmenu->ypos=%d\t", menu->xpos, menu->ypos);*/
-    /* menu no inicialized */ 
-    
     struct epoll_event ep;
     ep.events = EPOLLIN | EPOLLERR | EPOLLHUP;
     ep.data.ptr = &wayland->fds.display;
@@ -247,7 +246,7 @@ constructor(struct bm_menu *menu)
 
 fail:
     destructor(menu);
-    return false;
+return false;
 }
 
 extern const char*

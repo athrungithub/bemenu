@@ -222,8 +222,7 @@ xdg_surface_configure(void *data, struct xdg_surface *surface, int32_t width, in
 {
     (void)states, (void)width, (void)height, (void)states, (void)surface, (void)serial;
     struct window *d = data;
-    /*fprintf(stderr, "configure: xpos=%d\typos=%d\twidth=%d\theight=%d\n", d->xpos, d->ypos, width, height); */
-    xdg_surface_set_window_geometry(d->xdg_surface, d->xpos , d->ypos, width, height); 
+    xdg_surface_set_window_geometry(d->xdg_surface, d->xpos , d->ypos, width, height);
     xdg_surface_ack_configure(d->xdg_surface, serial);
 }
 
@@ -260,11 +259,6 @@ bm_wl_window_render(struct window *window, const struct bm_menu *menu)
         return;
     struct buffer *buffer;
 
-    if (menu->width)
-        window->width = menu->width;
-    window->xpos = menu->xpos;
-    window->ypos = menu->ypos;
-
     for (int tries = 0; tries < 2; ++tries) {
         if (!(buffer = next_buffer(window))) {
             fprintf(stderr, "could not get next buffer");
@@ -280,16 +274,9 @@ bm_wl_window_render(struct window *window, const struct bm_menu *menu)
        if (!menu->lines) {
             if (window->height == result.height)
                  break;
-       } else {
-           /*fprintf(stderr, "window->height=%d\tbuffer->height=%d\tresult.height=%d\tresult.displayed=%d\twindow->displayed=%d\n", window->height, buffer->height, result.height, result.displayed, window->displayed);*/
+       } else { /* TODO: set bottom */
            if (window->displayed != result.displayed) {
-               /*fprintf(stderr, "change buffer\n");*/
-               /*window->displayed = result.displayed;*/
-               /*window->height = result.height;*/
-               /*continue;*/
            } else {
-               /*fprintf(stderr, "No change buffer\nxpos=%d\nypos=%d\n", menu->xpos, menu->ypos);*/
-               /*xdg_surface_set_window_geometry(window->xdg_surface, window->xpos , window->ypos, window->width, window->height);*/
                break;
 
            }
@@ -346,7 +333,7 @@ bm_wl_window_create(struct window *window, struct wl_shm *shm, struct wl_shell *
 
     window->shm = shm;
     window->surface = surface;
-    wl_surface_damage(surface, 0, 0, window->width, window->height);
+    /*wl_surface_damage(surface, 0, 0, window->width, window->height);*/
     return true;
 }
 

@@ -263,7 +263,7 @@ struct bm_menu*
 menu_with_options(struct client *client)
 {
     struct bm_menu *menu;
-    if (!(menu = bm_menu_new(NULL)))
+    if (!(menu = bm_menu_new()))
         return NULL;
 
     bm_menu_set_font(menu, client->font);
@@ -282,8 +282,9 @@ menu_with_options(struct client *client)
     for (uint32_t i = 0; i < BM_COLOR_LAST; ++i)
         bm_menu_set_color(menu, i, client->colors[i]);
 
-    if (client->grab)
-        bm_menu_grab_keyboard(menu, true);
+    bm_menu_grab_keyboard(menu, true);
+
+    bm_menu_activate_renderer(NULL, menu);
 
     return menu;
 }

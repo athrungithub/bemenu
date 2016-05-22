@@ -223,14 +223,20 @@ enum bm_color {
 
 /**
  * Create new bm_menu instance.
- *
+ * @return bm_menu for new menu instance, **NULL** if creation failed.
+*/
+struct bm_menu* bm_menu_new();
+
+/*
+ * Activate renderer
  * If **NULL** is used as renderer, auto-detection will be used or the renderer with the name pointed by BEMENU_BACKEND env variable.
  * It's good idea to use NULL, if you want user to have control over the renderer with this env variable.
  *
  * @param renderer Name of renderer to be used for this instance, pass **NULL** for auto-detection.
- * @return bm_menu for new menu instance, **NULL** if creation failed.
+ * @param menu bm_menu instance full initialized
+ * @return **TRUE** if renderer initialized, **FALSE** fail initialize renderer.
  */
-struct bm_menu* bm_menu_new(const char *renderer);
+bool bm_menu_activate_renderer(const char *renderer, struct bm_menu *menu);
 
 /**
  * Release bm_menu instance.

@@ -50,11 +50,24 @@ bm_menu_item_is_selected(const struct bm_menu *menu, const struct bm_item *item)
 }
 
 struct bm_menu*
-bm_menu_new(const char *renderer)
+bm_menu_new()
 {
     struct bm_menu *menu;
     if (!(menu = calloc(1, sizeof(struct bm_menu))))
         return NULL;
+
+    /*if (!bm_menu_set_font(menu, NULL))*/
+        /*goto fail;*/
+
+    /*for (uint32_t i = 0; i < BM_COLOR_LAST; ++i) {*/
+        /*if (!bm_menu_set_color(menu, i, NULL))*/
+            /*goto fail;*/
+    /*}*/
+
+    return menu;
+}
+
+bool bm_menu_activate_renderer(const char *renderer, struct bm_menu *menu) {
 
     uint32_t count;
     const struct bm_renderer **renderers = bm_get_renderers(&count);
@@ -88,20 +101,15 @@ bm_menu_new(const char *renderer)
 
     if (!menu->renderer)
         goto fail;
+    if (menu->renderer->api.grab_keyboard)
+        menu->renderer->api.grab_keyboard(menu, menu->grabbed);
+    if (menu->renderer->api.set_monitor)
+        menu->renderer->api.set_monitor(menu, menu->monitor);
 
-    if (!bm_menu_set_font(menu, NULL))
-        goto fail;
-
-    for (uint32_t i = 0; i < BM_COLOR_LAST; ++i) {
-        if (!bm_menu_set_color(menu, i, NULL))
-            goto fail;
-    }
-
-    return menu;
-
+    return true;
 fail:
     bm_menu_free(menu);
-    return NULL;
+    return false;
 }
 
 void
@@ -318,8 +326,8 @@ bm_menu_set_bottom(struct bm_menu *menu, bool bottom)
 
     menu->bottom = bottom;
 
-    if (menu->renderer->api.set_bottom)
-        menu->renderer->api.set_bottom(menu, bottom);
+    /*if (menu->renderer->api.set_bottom)*/
+        /*menu->renderer->api.set_bottom(menu, bottom);*/
 }
 
 bool
@@ -339,8 +347,8 @@ bm_menu_set_monitor(struct bm_menu *menu, uint32_t monitor)
 
     menu->monitor = monitor;
 
-    if (menu->renderer->api.set_monitor)
-        menu->renderer->api.set_monitor(menu, monitor);
+    /*if (menu->renderer->api.set_monitor)*/
+        /*menu->renderer->api.set_monitor(menu, monitor);*/
 }
 
 uint32_t
@@ -360,8 +368,8 @@ bm_menu_grab_keyboard(struct bm_menu *menu, bool grab)
 
     menu->grabbed = grab;
 
-    if (menu->renderer->api.grab_keyboard)
-        menu->renderer->api.grab_keyboard(menu, grab);
+    /*if (menu->renderer->api.grab_keyboard)*/
+        /*menu->renderer->api.grab_keyboard(menu, grab);*/
 }
 
 bool
