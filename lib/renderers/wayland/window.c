@@ -274,7 +274,19 @@ bm_wl_window_render(struct window *window, const struct bm_menu *menu)
        if (!menu->lines) {
             if (window->height == result.height)
                  break;
-       } else { /* TODO: set bottom */
+            if (menu->bottom && (window->height == 1)) {
+               struct cairo_paint paint;
+               memset(&paint, 0, sizeof(paint));
+               paint.font = menu->font.name;
+
+               struct cairo_result result;
+               memset(&result, 0, sizeof(result));
+
+               bm_pango_get_text_extents(&buffer->cairo, &paint, &result, "%s", "Help");
+               fprintf(stderr, "heightFont=%d\n", result.height);
+               window->ypos = - (window->max_height - result.height);
+            }
+       } else { /* TODO: set bottom on line mode */
            if (window->displayed != result.displayed) {
            } else {
                break;
