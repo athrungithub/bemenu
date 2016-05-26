@@ -272,20 +272,14 @@ bm_wl_window_render(struct window *window, const struct bm_menu *menu)
         window->notify.render(&buffer->cairo, buffer->width, fmin(buffer->height, window->max_height), window->max_height, menu, &result);
 
        if (!menu->lines) {
-            if (window->height == result.height)
-                 break;
-            if (menu->bottom && (window->height == 1)) {
-               struct cairo_paint paint;
-               memset(&paint, 0, sizeof(paint));
-               paint.font = menu->font.name;
-
-               struct cairo_result result;
-               memset(&result, 0, sizeof(result));
-
-               bm_pango_get_text_extents(&buffer->cairo, &paint, &result, "%s", "Help");
-               fprintf(stderr, "heightFont=%d\n", result.height);
-               window->ypos = - (window->max_height - result.height);
-            }
+          if (window->height == result.height)
+             break;
+          if (window->height == 1) { // The first time
+            if (menu->bottom)
+                window->ypos = window->max_height - result.height + 2;
+            if (menu->xpos)
+                window->width = buffer->width - menu->xpos;
+         }
        } else { /* TODO: set bottom on line mode */
            if (window->displayed != result.displayed) {
            } else {
