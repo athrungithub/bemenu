@@ -13,7 +13,7 @@ struct client {
     uint32_t lines;
     uint32_t selected;
     uint32_t monitor;
-    uint32_t x; //x y w pos & wide 
+    uint32_t x; //x y w pos & wide
     uint32_t y;
     uint32_t w;
     bool bottom;

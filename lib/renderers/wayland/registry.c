@@ -266,6 +266,7 @@ display_handle_mode(void *data, struct wl_output *wl_output, uint32_t flags, int
     if (flags & WL_OUTPUT_MODE_CURRENT) {
         wayland->window.width = width;
         wayland->window.max_height = height;
+        wayland->window.max_width = (uint32_t)width;
     }
 }
 

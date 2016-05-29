@@ -38,10 +38,9 @@ render(const struct bm_menu *menu)
     }
 
     if (wayland->input.code != wayland->input.last_code) {
+        bm_wl_window_render(&wayland->window, menu);
         wayland->input.last_code = wayland->input.code;
     }
-    //always redraw
-    bm_wl_window_render(&wayland->window, menu);
 }
 
 static enum bm_key
@@ -219,7 +218,8 @@ constructor(struct bm_menu *menu)
     wayland->window.xpos = menu->xpos;
     wayland->window.ypos = menu->ypos;
     if (menu->width)
-        wayland->window.width = menu->width;
+        wayland->window.width = (menu->width < wayland->window.max_width / 10) ? (wayland->window.max_width / 10) : menu->width;
+        /*wayland->window.width = menu->width;*/
 
     if (!bm_wl_window_create(&wayland->window, wayland->shm, wayland->shell, wayland->xdg_shell, surface))
         goto fail;
@@ -246,7 +246,7 @@ constructor(struct bm_menu *menu)
 
 fail:
     destructor(menu);
-return false;
+    return false;
 }
 
 extern const char*

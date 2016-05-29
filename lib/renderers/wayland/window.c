@@ -271,25 +271,20 @@ bm_wl_window_render(struct window *window, const struct bm_menu *menu)
         struct cairo_paint_result result;
         window->notify.render(&buffer->cairo, buffer->width, fmin(buffer->height, window->max_height), window->max_height, menu, &result);
 
-       if (!menu->lines) {
-          if (window->height == result.height)
-             break;
-          if (window->height == 1) { // The first time
-            if (menu->bottom)
-                window->ypos = window->max_height - result.height + 2;
-            if (menu->xpos)
-                window->width = buffer->width - menu->xpos;
-         }
-       } else { /* TODO: set bottom on line mode */
-           if (window->displayed != result.displayed) {
-           } else {
-               break;
-
-           }
+       if (window->displayed != result.displayed) {
+          if (menu->xpos)
+              window->xpos = (menu->xpos > (window->max_width - buffer->width)) ? (window->max_width - buffer->width) : menu->xpos;
+          if (menu->ypos)
+              window->ypos = (menu->ypos > (window->max_height - result.height)) ? (window->max_height - result.height - 2) : menu->ypos;
+          if (menu->bottom)
+              window->ypos = window->max_height - result.height - 2;
+          xdg_surface_set_window_geometry(window->xdg_surface, window->xpos, window->ypos, buffer->width, result.height);
+       } else {
+           break;
        }
-        window->height = result.height;
-        window->displayed = result.displayed;
-        destroy_buffer(buffer);
+       window->height = result.height;
+       window->displayed = result.displayed;
+       destroy_buffer(buffer);
     }
 
     window->frame_cb = wl_surface_frame(window->surface);
@@ -339,7 +334,7 @@ bm_wl_window_create(struct window *window, struct wl_shm *shm, struct wl_shell *
 
     window->shm = shm;
     window->surface = surface;
-    /*wl_surface_damage(surface, 0, 0, window->width, window->height);*/
+    wl_surface_damage(window->surface, 0, 0, INT32_MAX, INT32_MAX);
     return true;
 }
 

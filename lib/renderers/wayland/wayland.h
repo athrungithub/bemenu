@@ -81,7 +81,7 @@ struct window {
     struct xdg_surface *xdg_surface;
     struct wl_shm *shm;
     struct buffer buffers[2];
-    uint32_t width, height, max_height, xpos, ypos;
+    uint32_t width, height, max_height, max_width, xpos, ypos;
     uint32_t displayed;
 
     struct {

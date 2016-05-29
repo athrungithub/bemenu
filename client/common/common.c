@@ -67,9 +67,6 @@ usage(FILE *out, const char *name)
           " -p, --prompt          defines the prompt text to be displayed.\n"
           " -P, --prefix          text to shown before highlighted item.\n"
           " -I, --index           select item at index automatically.\n"
-          " -x, --xpos            x position.\n"
-          " -y, --ypos            y position.\n"
-          " -w, --width           width.\n"
           " --scrollbar           display scrollbar. (always, autohide)\n"
           " --wrap                wraps cursor selection.\n\n"
 
@@ -84,6 +81,9 @@ usage(FILE *out, const char *name)
           "   c = ncurses, w == wayland, x == x11\n"
           "   (...) At end of help indicates the backend support for option.\n\n"
 
+          " -x, --xpos            x position.(w)\n"
+          " -y, --ypos            y position.(w)\n"
+          " -w, --width           width.(w)\n"
           " -b, --bottom          appears at the bottom of the screen. (x)\n"
           " -f, --grab            grabs the keyboard before reading stdin. (x)\n"
           " -m, --monitor         index of monitor where menu will appear. (x)\n"
