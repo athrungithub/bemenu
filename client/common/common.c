@@ -84,7 +84,7 @@ usage(FILE *out, const char *name)
           " -x, --xpos            x position.(w)\n"
           " -y, --ypos            y position.(w)\n"
           " -w, --width           width.(w)\n"
-          " -b, --bottom          appears at the bottom of the screen. (x)\n"
+          " -b, --bottom          appears at the bottom of the screen. (wx)\n"
           " -f, --grab            grabs the keyboard before reading stdin. (x)\n"
           " -m, --monitor         index of monitor where menu will appear. (x)\n"
           " --fn                  defines the font to be used ('name [size]'). (wx)\n"
