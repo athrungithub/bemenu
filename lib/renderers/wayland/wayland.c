@@ -215,11 +215,35 @@ constructor(struct bm_menu *menu)
         goto fail;
 
     wayland->window.height = 1;
-    wayland->window.xpos = menu->xpos;
     wayland->window.ypos = menu->ypos;
-    if (menu->width)
-        wayland->window.width = (menu->width < wayland->window.max_width / 10) ? (wayland->window.max_width / 10) : menu->width;
-        /*wayland->window.width = menu->width;*/
+    if (menu->width) {
+        if (menu->width < wayland->window.max_width / 10) {
+            wayland->window.width = wayland->window.max_width / 10;
+            if (menu->xpos)
+                wayland->window.xpos = (menu->xpos > (wayland->window.max_width - wayland->window.width)) ?
+                   (wayland->window.max_width - wayland->window.width) : menu->xpos;
+        } else if (menu->width > wayland->window.max_width) {
+            wayland->window.width = wayland->window.max_width;
+            wayland->window.xpos = 0;
+        } else {
+            wayland->window.width = menu->width;
+            if (menu->xpos) {
+                wayland->window.xpos = (menu->xpos > (wayland->window.max_width - wayland->window.width)) ?
+                    (wayland->window.max_width - wayland->window.width) : menu->xpos;
+            }
+        }
+    } else if (menu->xpos) {
+        if (menu->xpos > wayland->window.max_width) {
+            wayland->window.width = wayland->window.max_width / 10;
+            wayland->window.xpos = wayland->window.max_width - (wayland->window.max_width  / 10);
+        } else {
+            wayland->window.width = wayland->window.max_width - menu->xpos;
+            wayland->window.xpos = menu->xpos;
+        }
+    } else {
+        wayland->window.width = wayland->window.max_width;
+        wayland->window.xpos = 0;
+    }
 
     if (!bm_wl_window_create(&wayland->window, wayland->shm, wayland->shell, wayland->xdg_shell, surface))
         goto fail;

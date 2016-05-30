@@ -271,9 +271,7 @@ bm_wl_window_render(struct window *window, const struct bm_menu *menu)
         struct cairo_paint_result result;
         window->notify.render(&buffer->cairo, buffer->width, fmin(buffer->height, window->max_height), window->max_height, menu, &result);
 
-       if (window->displayed != result.displayed) {
-          if (menu->xpos)
-              window->xpos = (menu->xpos > (window->max_width - buffer->width)) ? (window->max_width - buffer->width) : menu->xpos;
+       if (window->height != result.height) {
           if (menu->ypos)
               window->ypos = (menu->ypos > (window->max_height - result.height)) ? (window->max_height - result.height - 2) : menu->ypos;
           if (menu->bottom)
